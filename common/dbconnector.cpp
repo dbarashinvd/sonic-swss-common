@@ -68,7 +68,7 @@ void SonicDBConfig::parseDatabaseConfig(const string &file,
     }
 }
 
-void SonicDBConfig::initializeGlobalConfig(const string &file)
+void SonicDBConfig::initializeGlobalConfig(const string &file, const string &ns)
 {
     std::string local_file, dir_name, ns_name;
     std::unordered_map<std::string, SonicDBInfo> db_entry;
@@ -77,6 +77,7 @@ void SonicDBConfig::initializeGlobalConfig(const string &file)
     std::lock_guard<std::recursive_mutex> guard(m_db_info_mutex);
 
     SWSS_LOG_ENTER();
+    SWSS_LOG_NOTICE("enter SonicDBConfig initializeGlobalConfig");
 
     if (m_global_init)
     {
@@ -153,7 +154,14 @@ void SonicDBConfig::initializeGlobalConfig(const string &file)
     }
     else
     {
-        SWSS_LOG_ERROR("Sonic database config global file doesn't exist at %s\n", file.c_str());
+        if (ns.empty())
+        {
+            SWSS_LOG_ERROR("Sonic database config global file doesn't exist at %s ns empty", file.c_str());
+        }
+        else
+        {
+            SWSS_LOG_ERROR("Sonic database config global file doesn't exist at %s ns %s\n", file.c_str(), ns.c_str());
+        }
     }
 
 

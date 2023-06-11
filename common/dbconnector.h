@@ -40,6 +40,7 @@ class SonicDBConfig
 public:
     static constexpr const char *DEFAULT_SONIC_DB_CONFIG_FILE = "/var/run/redis/sonic-db/database_config.json";
     static constexpr const char *DEFAULT_SONIC_DB_GLOBAL_CONFIG_FILE = "/var/run/redis/sonic-db/database_global.json";
+    static constexpr const char *EMPTY_NS_BLA = "bla";
     static void initialize(const std::string &file = DEFAULT_SONIC_DB_CONFIG_FILE);
 #if defined(SWIG) && defined(SWIGPYTHON)
     %pythoncode %{
@@ -50,13 +51,16 @@ public:
     %}
 #endif
 
-    static void initializeGlobalConfig(const std::string &file = DEFAULT_SONIC_DB_GLOBAL_CONFIG_FILE);
+    static void initializeGlobalConfig(const std::string &file = DEFAULT_SONIC_DB_GLOBAL_CONFIG_FILE, const std::string &ns = EMPTY_NS_BLA);
 #if defined(SWIG) && defined(SWIGPYTHON)
     %pythoncode %{
         ## TODO: the python function and C++ one is not on-par
         @staticmethod
-        def load_sonic_global_db_config(global_db_file_path=DEFAULT_SONIC_DB_GLOBAL_CONFIG_FILE, namespace=None):
-            SonicDBConfig.initializeGlobalConfig(global_db_file_path)
+        def load_sonic_global_db_config(global_db_file_path=DEFAULT_SONIC_DB_GLOBAL_CONFIG_FILE, namespace="bla"):
+            #import traceback
+            import logging
+            logging.info("load_sonic_global_db_config called from swig with namespace: {}".format(namespace))
+            SonicDBConfig.initializeGlobalConfig(global_db_file_path, namespace)
     %}
 #endif
 
